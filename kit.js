@@ -57,11 +57,16 @@ export default class KIT extends Component {
 
   handleAdd() {
     console.log('add that personRide');
-    debugger;
+
+    let nextID = 0;
+    if (this.state.personRides) {
+      nextID = Object.values(this.state.personRides).length;
+    }
+
     const itemsRef = firebase.database().ref('items');
     itemsRef.push({
-      rider: 'Tim',
-      ride: 'The Bat'
+      rider: this.state.user.displayName,
+      ride: 'Ride ' + nextID
     });
   }
 
