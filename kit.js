@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import firebase, { auth, provider } from './firebase';
 
+import firebase from './firebase';
+
 import './style.css';
 
 export default class KIT extends Component {
@@ -9,7 +11,7 @@ export default class KIT extends Component {
     super();
     this.state = {
       name: 'Kings Island Visitors',
-      personRides: []
+      personRides: {}
     };
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
@@ -55,6 +57,7 @@ export default class KIT extends Component {
 
   handleAdd() {
     console.log('add that personRide');
+    debugger;
     const itemsRef = firebase.database().ref('items');
     itemsRef.push({
       rider: 'Tim',
@@ -64,7 +67,11 @@ export default class KIT extends Component {
 
   render() {
 
-    const personRides = this.state.personRides.map(pr => <div key={pr.rider + '_' + pr.ride}>{pr.rider} / {pr.ride}</div>);
+    let personRides = [];
+    if (this.state.personRides) {
+      const personRidesArray = Object.values(this.state.personRides);
+      personRides = personRidesArray.map(pr => <div key={pr.rider + '_' + pr.ride}>{pr.rider} / {pr.ride}</div>);
+    }
 
     return (
       <div>
