@@ -11,11 +11,16 @@ export default class KIT extends Component {
     super();
     this.state = {
       name: 'Kings Island Visitors',
-      personRides: {}
+      personRides: {},
+      currentDrinks: 3,
+      availableDiners: ['Jenny', 'Ally', 'Ryan', 'Logan', 'Nolan'],
+      currentDiners: ['Jenny', 'Ally', 'Ryan', 'Logan', 'Nolan']
     };
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.handleAdd = this.handleAdd.bind(this);
+    this.handleDrinkChange = this.handleDrinkChange.bind(this);
+    this.handleAddDrinks = this.handleAddDrinks.bind(this);
   }
 
   componentDidMount() {
@@ -26,14 +31,24 @@ export default class KIT extends Component {
       }
     });
 
-    const itemsRef = firebase.database().ref('items');
+    const itemsRef = firebase.database().ref('temp');
     itemsRef.on('value', (snapshot) => {
       let items = snapshot.val();
       debugger;
       this.setState({
         personRides: items
       });
-    })
+    });
+
+    const drinksRef = firebase.database().ref('temp/drinks');
+    drinksRef.on('value', (snapshot) => {
+      let drinks = snapshot.val();
+      debugger;
+      this.setState({
+        drinks
+      });
+    });
+
   }
 
   login() {
@@ -63,11 +78,31 @@ export default class KIT extends Component {
       nextID = Object.values(this.state.personRides).length;
     }
 
-    const itemsRef = firebase.database().ref('items');
+    const itemsRef = firebase.database().ref('temp');
     itemsRef.push({
       rider: this.state.user.displayName,
       ride: 'Ride ' + nextID
     });
+  }
+
+  handleDrinkChange(e) {
+    this.setState({ currentDrinks: e.target.value });
+  }
+
+  handleAddDrinks() {
+    const drinksRef = firebase.database().ref('temp/drinks');
+    drinksRef.push({
+      submitter: this.state.user.displayName,
+      drinks: this.state.currentDrinks,
+    });
+  }
+
+  handleDinerChange(e) {
+
+  }
+
+  handleAddMeal() {
+
   }
 
   render() {
@@ -78,24 +113,60 @@ export default class KIT extends Component {
       personRides = personRidesArray.map(pr => <div key={pr.rider + '_' + pr.ride}>{pr.rider} / {pr.ride}</div>);
     }
 
+    let drinks = [];
+    if (this.state.drinks) {
+      const drinkArray = Object.values(this.state.drinks);
+      drinks = drinkArray.map((d, index) => <div key={index}>{d.submitter} - {d.drinks}</div>);
+    }
+
+
+
+
     return (
       <div>
         <h1>KIT</h1>
         {
           this.state.user ?
             <div>
-              {this.state.user.displayName}
-              <img src={this.state.user.photoURL} />
-              <button onClick={this.logout}>Logout</button>
+
+              
+              <img src={this.state.user.photoURL} height={50} width={50} onClick={this.logout} />
+
+
+              {/*}
+              <button onClick={this.handleAdd} > Add a personRide</button >
+              {personRides}
+              */}
+
+              <div>
+                <h1>Add Drinks</h1>
+                <input type="number" value={this.state.currentDrinks} onChange={this.handleDrinkChange} />
+                <button onClick={this.handleAddDrinks}>Add Drinks</button>
+                {drinks}
+              </div>
+
+
+
+              <div>
+                <h1>Add Meals</h1>
+                {/*this.state.availableDiners.map((diner, index) => {
+                  return (
+                    <div>
+                      <input type="checkbox" /> {diner}
+                    </div>
+                  );
+                })*/}
+                coming soon...
+              </div>
+
+
+
+
             </div>
             :
             <button onClick={this.login}>Login</button>
         }
 
-        < p > Future home of the new Kings Island Tracker.</p >
-        {personRides}
-
-        < button onClick={this.handleAdd} > Add a personRide</button >
       </div >
     );
   }
