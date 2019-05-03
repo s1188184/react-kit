@@ -4,6 +4,7 @@ import firebase, { auth, provider } from './firebase';
 
 import firebase from './firebase';
 
+import 'bootstrap/dist/css/bootstrap.css';
 import './style.css';
 
 export default class KIT extends Component {
@@ -40,16 +41,16 @@ export default class KIT extends Component {
       }
     });
 
-    const itemsRef = firebase.database().ref('temp');
-    itemsRef.on('value', (snapshot) => {
-      let items = snapshot.val();
-      debugger;
-      this.setState({
-        personRides: items
-      });
-    });
+    // const itemsRef = firebase.database().ref('temp');
+    // itemsRef.on('value', (snapshot) => {
+    //   let items = snapshot.val();
+    //   debugger;
+    //   this.setState({
+    //     personRides: items
+    //   });
+    // });
 
-    const drinksRef = firebase.database().ref('temp/drinks');
+    const drinksRef = firebase.database().ref('2019/drinks');
     drinksRef.on('value', (snapshot) => {
       let drinks = snapshot.val();
       debugger;
@@ -58,7 +59,7 @@ export default class KIT extends Component {
       });
     });
 
-    const mealsRef = firebase.database().ref('temp/meals');
+    const mealsRef = firebase.database().ref('2019/meals');
     mealsRef.on('value', (snapshot) => {
       let meals = snapshot.val();
       this.setState({
@@ -95,7 +96,7 @@ export default class KIT extends Component {
       nextID = Object.values(this.state.personRides).length;
     }
 
-    const itemsRef = firebase.database().ref('temp');
+    const itemsRef = firebase.database().ref('2019');
     itemsRef.push({
       rider: this.state.user.displayName,
       ride: 'Ride ' + nextID
@@ -107,7 +108,7 @@ export default class KIT extends Component {
   }
 
   handleAddDrinks() {
-    const drinksRef = firebase.database().ref('temp/drinks');
+    const drinksRef = firebase.database().ref('2019/drinks');
     drinksRef.push({
       submitter: this.state.user.displayName,
       drinks: this.state.currentDrinks,
@@ -134,7 +135,7 @@ export default class KIT extends Component {
     });
 
 
-    const mealsRef = firebase.database().ref('temp/meals');
+    const mealsRef = firebase.database().ref('2019/meals');
 
     for (let diner of arrayOfDiners) {
       mealsRef.push({
@@ -169,6 +170,7 @@ export default class KIT extends Component {
     return (
       <div>
         <h1>KIT</h1>
+        <hr />
         {
           this.state.user ?
             <div>
@@ -184,8 +186,8 @@ export default class KIT extends Component {
 
               <div>
                 <h1>Add Drinks</h1>
-                <input type="number" value={this.state.currentDrinks} onChange={this.handleDrinkChange} />
-                <button onClick={this.handleAddDrinks}>Add Drinks</button>
+                <input className="form-control" type="number" value={this.state.currentDrinks} onChange={this.handleDrinkChange} />
+                <button className="btn btn-primary" onClick={this.handleAddDrinks}>Add Drinks</button>
                 <p>{drinks}</p>
               </div>
 
@@ -197,14 +199,12 @@ export default class KIT extends Component {
                   const value = this.state.diners[diner];
                   return (
                     <div key={diner}>
-                      <input type="checkbox" checked={value} onChange={(e) => this.handleDinerChange(e, diner)} /> {diner}
+                      <input className="form-control" type="checkbox" checked={value} onChange={(e) => this.handleDinerChange(e, diner)} /> {diner}
                     </div>
                   );
                 })}
-                <button onClick={this.handleAddMeal}>Add Meal</button>
-                <p>
-                {meals}
-                </p>
+                <button className="btn btn-primary" onClick={this.handleAddMeal}>Add Meal</button>
+                <p>{meals}</p>
               </div>
 
 
